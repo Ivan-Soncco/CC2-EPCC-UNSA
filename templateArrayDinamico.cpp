@@ -1,29 +1,31 @@
 #include <iostream>
 
+template <typename T>
 class ArrayDinamico{
     private:
-        int *a;
+        T *a;
         int size=0;
     public:
     ArrayDinamico(){a= new int[size];};
     ArrayDinamico(int cantidad);
-    void push_back(int numero);
+    void push_back(T valor);
     void mostrar();
-    void ingresar(int valor, int posicion);
+    void ingresar(T valor, int posicion);
     void eliminar(int posicion);
     //func de 
 };
-ArrayDinamico::ArrayDinamico(int cantidad){
+template <typename T>
+ArrayDinamico<T>::ArrayDinamico(int cantidad){
     size=cantidad;
     if(size==0){
-        a=new int[1];
+        a=new T[1];
         *a=0;
     }else if (size<0)
     {
         std::cout<<"ERROR";
     }else{
-        int valor;
-        a=new int[size];
+        T valor;
+        a=new T[size];
         for(int i=0;i<size;i++){
             std::cout<<"Digite un valor: ";
             std::cin>>valor;
@@ -31,7 +33,8 @@ ArrayDinamico::ArrayDinamico(int cantidad){
         }
     }
 };
-void ArrayDinamico::mostrar(){
+template <typename T>
+void ArrayDinamico<T>::mostrar(){
     if(size==0){
         std::cout<<0<<std::endl;
     }else{
@@ -42,18 +45,21 @@ void ArrayDinamico::mostrar(){
     }
     
 }
-void ArrayDinamico::push_back(int numero){
-    int *aux= new int[size+1];
+template <typename T>
+void ArrayDinamico<T>::push_back(T valor){
+    T *aux= new T[size+1];
     for(int i=0;i<size;i++){
         *(aux+i)=*(a+i);
     }
-    *(aux+size)=numero;
+    *(aux+size)=valor;
     delete[] a;
     a=aux;
     size++;
 }
-void ArrayDinamico::ingresar(int valor, int posicion){
-    int *aux= new int[size+1];
+
+template <typename T>
+void ArrayDinamico<T>::ingresar(T valor, int posicion){
+    T *aux= new T[size+1];
     for(int i=0;i<size+1;i++){
         if(i>=posicion){
             if(i==posicion){
@@ -69,9 +75,9 @@ void ArrayDinamico::ingresar(int valor, int posicion){
     a=aux;
     size++;
 }
-
-void ArrayDinamico::eliminar(int posicion){
-    int *aux= new int[size-1];
+template <typename T>
+void ArrayDinamico<T>::eliminar(int posicion){
+    T *aux= new T[size-1];
     for(int i=0;i<size-1;i++){
         if(i>=posicion){
             if(i==posicion){
@@ -88,15 +94,15 @@ void ArrayDinamico::eliminar(int posicion){
 }
 
 int main(){
-    ArrayDinamico a;
+    ArrayDinamico<int> a;
     a.mostrar();
-    ArrayDinamico *b= new ArrayDinamico(4);
+    ArrayDinamico<char> *b= new ArrayDinamico<char>(4);
     b->mostrar();
-    std::cout<<"Push_back(76)"<<std::endl;
-    b->push_back(76);
+    std::cout<<"Push_back('A')"<<std::endl;
+    b->push_back('A');
     b->mostrar();
-    std::cout<<"Ingresar 5 en pos 3"<<std::endl;
-    b->ingresar(5, 3);
+    std::cout<<"Ingresar en pos 3"<<std::endl;
+    b->ingresar('e', 3);
     b->mostrar();
     std::cout<<"Eliminar pos 3"<<std::endl;
     b->eliminar(3);
