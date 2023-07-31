@@ -12,6 +12,14 @@ Player::Player(Model m1)
 void Player::setPosicion(Vector3 pos){
     playerPosition=pos;
 }
+void Player::setPosicionX(float valor)
+{
+    playerPosition.x=valor;
+}
+void Player::setPosicionY(float valor)
+{
+    playerPosition.y=valor;
+}
 void Player::setPosicionZ(float valor)
 {
     playerPosition.z=valor;
@@ -33,4 +41,7 @@ void Player::setModelo(Model modelo){
 }
 Model Player::getModelo(){
     return modelPlayer;
+}
+Vector3 Player::getPosicion(){
+    return playerPosition;
 }

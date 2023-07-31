@@ -1,13 +1,19 @@
 #include "enemy.h"
+//#include "game.h"
 #include <raylib.h>
 #include <iostream>
-#include "game.h"
 #include "nave.h"
 
 #define MAX_ENEMIES 6
 #define ENEMY_SPEED 20
 
-Enemy::Enemy(){}
+
+
+
+/*
+Game Enemy::getGamefromEnemy(){
+    return Game();
+}*/
 
 Enemy::Enemy(Model m1)
 {
@@ -19,72 +25,79 @@ int Enemy::getEnemyPoints()
     return enemyPoints;
 }
 
-void Enemy::moverEnemigo(Game* game, int i){
-    
-        
-            game->enemyPositions[i].x -= (ENEMY_SPEED + game->elapsedTime * 5) * GetFrameTime();
 
-            if (game->enemyPositions[i].x < -101.0f)
+void Enemy::msj(int i){
+    const int screenWidth = 940;
+    const int screenHeight = 480;
+    //const char* enemyName = "Enemy ";
+    //char enemyIndex[10];
+    //sprintf(enemyIndex,i);
+
+    DrawText(TextFormat("Enemy %d",(i+1)), screenWidth / 2 - MeasureText("Enemy %d", 20) / 2, screenHeight / 2 + ((i+2)*40), 20, GRAY);  
+}
+
+Enemy& Enemy::operator=(const Enemy& otro){
+    Enemy tmp(otro);
+    std::swap(*this,tmp);
+    return *this;
+}
+
+void Enemy::move(double elapsedTime){
+    getPosicionX() -= (ENEMY_SPEED + elapsedTime * 5) * GetFrameTime();
+            
+            if (getPosicionX() < -101.0f)
             {
                 float x = GetRandomValue(-30, -10);
                 float z = GetRandomValue(-6, 6);
-                game->enemyPositions[i] = (Vector3){x, 0.0f, z};
+                setPosicion((Vector3){x, 0.0f, z});
             }
 
             // Limit enemy positions within the vertical bounds
-            if (game->enemyPositions[i].y < -5.0f)
-                game->enemyPositions[i].y = -5.0f;
-            else if (game->enemyPositions[i].y > 5.0f)
-                game->enemyPositions[i].y = 5.0f;
-        
+            if (getPosicionY() < -5.0f)
+                setPosicionY(-5.0f);
+            else if (getPosicionY() > 5.0f)
+                setPosicionY(5.0f);
 }
 
-void Enemy:: colision(Nave* player1,Game* game,int i)
-{
-    if (player1->bulletActive[i])
-            {
-                for (int j = 0; j < MAX_ENEMIES; j++)
-                {
-                    if (CheckCollisionBoxSphere((BoundingBox){(Vector3){game->enemyPositions[j].x - 0.5f, game->enemyPositions[j].y - 0.5f, game->enemyPositions[j].z - 0.5f},
-                                                              (Vector3){game->enemyPositions[j].x + 0.5f, game->enemyPositions[j].y + 0.5f, game->enemyPositions[j].z + 0.5f}},
-                                                (Vector3){player1->bullets[i].x, player1->bullets[i].y, player1->bullets[i].z}, 0.1f))
+void Enemy::colisionConBala(Nave* player1,int i){
+    if (CheckCollisionBoxSphere((BoundingBox){(Vector3){getPosicionX()- 0.5f, getPosicionY() - 0.5f, getPosicionZ() - 0.5f},
+                                                              (Vector3){getPosicionX() + 0.5f, getPosicionY() + 0.5f, getPosicionZ() + 0.5f}},
+                                                (Vector3){player1->arrayBalas[i].getPosicionX(), player1->arrayBalas[i].getPosicionY(), player1->arrayBalas[i].getPosicionZ()}, 0.1f))
                     {
                         player1->bulletActive[i] = false;
 
                         float x = GetRandomValue(-30, -10);
                         float z = GetRandomValue(-6, 6);
-                        game->enemyPositions[j] = (Vector3){x, 0.0f, z};
+                        setPosicion((Vector3){x, 0.0f, z});
 
-                        player1->score += enemyPoints;
+                        player1->score += getEnemyPoints();
                     }
-                }
-            }
 }
-
-void Enemy::colisionConNave(Nave* player1,Game* game, int i)
-{
-    if (CheckCollisionBoxSphere((BoundingBox){(Vector3){game->player1Position.x - 0.5f, game->player1Position.y - 0.5f, game->player1Position.z - 0.5f},
-                                                      (Vector3){game->player1Position.x + 0.5f, game->player1Position.y + 0.5f, game->player1Position.z + 0.5f}},
-                                        (Vector3){game->enemyPositions[i].x, game->enemyPositions[i].y, game->enemyPositions[i].z}, 0.5f))
+void Enemy::colisionConNave(Nave* nave,int i){
+    if (CheckCollisionBoxSphere((BoundingBox){(Vector3){nave->getPosicionX() - 0.5f, nave->getPosicionY() - 0.5f, nave->getPosicionZ() - 0.5f},
+                                                      (Vector3){nave->getPosicionX() + 0.5f, nave->getPosicionY() + 0.5f, nave->getPosicionZ() + 0.5f}},
+                                        (Vector3){getPosicionX(), getPosicionY(), getPosicionZ()}, 0.5f))
             {
 
-                game->bandera1 = true;
-                game->model_s1 = 0.02;
+                nave->bandera= true;
+                nave->model = 0.02;
                 // bloquear movimiento y disparo del jugador 1
-                game->player1Position.x = -120;
-                game->bulletCount = 0;
+                nave->setPosicionX(-120);
+                nave->bulletCount = 0;
 
                 float x = GetRandomValue(-30, -10);
                 float z = GetRandomValue(-6, 6);
-                game->bulletActive[i] = false;
-                game->bullets[i] = (Vector3){-120, 0.0f, 0.0f};
+                nave->bulletActive[i] = false;
+                nave->arrayBalas[i].setPosicion((Vector3){-120, 0.0f, 0.0f});
 
-                game->enemyPositions[i] = (Vector3){x, 0.0f, z};
-                if (game->bandera1 && game->bandera2)
-                {
-                    game->gameOver = true;
-                }
+                setPosicion((Vector3){x, 0.0f, z});
+                
             }
-
 }
 
+void Enemy::reiniciarEnemy(){
+    
+    float x = GetRandomValue(-30, -10);
+    float z = GetRandomValue(-6, 6);
+    setPosicion((Vector3){x, 0.0f, z});
+}
