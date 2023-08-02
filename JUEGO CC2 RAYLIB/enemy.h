@@ -6,7 +6,7 @@
 #include "nave.h"
 #define MAX_ENEMIES 6
 
-class Game;
+
 
 class Enemy : public Player{
     public:

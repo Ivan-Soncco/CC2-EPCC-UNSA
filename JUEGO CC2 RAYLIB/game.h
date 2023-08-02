@@ -10,34 +10,29 @@
 #define MAX_BULLETS 100
 using namespace std;
 
-//class Enemy;
-
 class Game
 {
 private:
     static Game *instance; // Singleton
-    
     Game() {} // Construtor Privado
-
 public:
     double startTime = GetTime();
     double currentTime = startTime;
     double elapsedTime = 0.0;
     bool gameOver;
     bool gameStart=false;
-    
+    Nave* player1=nullptr;
+    Nave* player2=nullptr;
     static Game *getInstance()
     {
         if (instance == nullptr)
             instance = new Game();
         return instance;
     }
-
-    void resetGame(Nave*,Nave*,Enemy*);
-    void generateRandomEnemies();
-    void setBulletCount1(int);
-    void setBulletCount2(int);
-    void menu(Camera);
+    void resetGame(Enemy*);
+    void menu();
+    void play(Enemy*,Camera);
+    void GameOver();
 };
 
 #endif

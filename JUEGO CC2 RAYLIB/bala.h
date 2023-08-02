@@ -9,7 +9,6 @@ class Bala : public Player{
     private:
     public:
         Bala();
-
 };
 
 

@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include "bala.h"
 #include <iostream>
+#include <memory>
 #define MAX_BULLETS 100
 
 Nave::Nave(){}
@@ -35,6 +36,7 @@ void Nave::disparar(){
             {
                 if (!bulletActive[i])
                 {
+                    //arrayBalas[i]= std::make_unique<Bala>();
                     arrayBalas[i].setPosicion(getPosicion());
                     bulletActive[i] = true;
                     bulletFired = true;
